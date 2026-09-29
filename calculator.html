@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pre-Diabetes Risk Calculator - Dubai Medical University</title>
+    <!-- Tailwind CSS Play CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .step-content { display: none; }
+        .step-content.active { display: block; }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen font-sans">
+
+    <!-- Header Panel -->
+    <div class="bg-slate-900 text-white p-6 shadow-md">
+        <div class="max-w-4xl mx-auto flex items-center space-x-4">
+            <div class="bg-amber-400 p-2 rounded-full text-slate-950 font-bold text-xl">🏆</div>
+            <div>
+                <h1 class="text-xs uppercase tracking-widest text-gray-400 font-semibold">Dubai Medical University</h1>
+                <p class="text-2xl font-bold tracking-tight">Pre-Diabetes Risk Calculator</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Container Layout -->
+    <div class="max-w-3xl mx-auto mt-10 px-4">
+        
+        <!-- Questionnaire Wizard Box -->
+        <div id="quizContainer" class="bg-white p-8 rounded-xl shadow-lg border border-gray-100">
+            
+            <!-- Dynamic Progress Tracker Header -->
+            <div class="flex justify-between items-center text-sm font-medium text-gray-500 mb-2">
+                <span id="stepIndicator">Question 1 of 5</span>
+                <span id="percentIndicator">20%</span>
+            </div>
+            <div class="w-full bg-gray-200 h-2 rounded-full mb-8 overflow-hidden">
+                <div id="progressBar" class="bg-amber-500 h-full transition-all duration-300" style="width: 20%"></div>
+            </div>
+
+            <!-- STEP 1: AGE ACCORDING TO STUDY PROTOCOLS -->
+            <div class="step-content active" data-step="1">
+                <h3 class="text-xl font-bold text-gray-800 mb-6">What is your age range?</h3>
+                <div class="space-y-3">
+                    <button type="button" onclick="selectOption('age', 0, 'Under 40', event)" class="option-btn w-full text-left p-4 border rounded-lg hover:bg-slate-50 transition font-medium border-gray-200 text-gray-700">Under 40 years (0 points)</button>
+                    <button type="button" onclick="selectOption('age', 1, '40-49', event)" class="option-btn w-full text-left p-4 border rounded-lg hover:bg-slate-50 transition font-medium border-gray-200 text-gray-700">40–49 years (1 point)</button>
+                    <button type="button" onclick="selectOption('age', 2, '50-59', event)" class="option-btn w-full text-left p-4 border rounded-lg hover:bg-slate-50 transition font-medium border-gray-200 text-gray-700">50–59 years (2 points)</button>
+                    <button type="button" onclick="selectOption('age', 3, '60+', event)" class="option-btn w-full text-left p-4 border rounded-lg hover:bg-slate-50 transition font-medium border-gray-200 text-gray-700">60 years or older (3 points)</button>
+                </div>
+            </div>
+
+            <!-- STEP 2: FAMILY CLINICAL BACKGROUND -->
+            <div class="step-content" data-step="2">
+                <h3 class="text-xl font-bold text-gray-800 mb-6">Do you have a family history of diabetes (parents or siblings)?</h3>
+                <div class="space-y-3 mb-6">
+                    <button type="button" onclick="selectOption('family', 1, 'Yes', event)" class="option-btn w-full text-left p-4 border rounded-lg hover:bg-slate-50 transition font-medium border-gray-200 text-gray-700">Yes (1 point)</button>
+                    <button type="button" onclick="selectOption('family', 0, 'No', event)" class="option-btn w-full text-left p-4 border rounded-lg hover:bg-slate-50 transition font-medium border-gray-200 text-gray-700">No (0 points)</button>
+                </div>
+                <div class="border-t pt-4">
+                    <button type="button" onclick="navigateBack()" class="text-gray-600 font-bold hover:underline">← Back</button>
+                </div>
+            </div>
+
+            <!-- STEP 3: LIFESTYLE & EXERCISE PATTERNS -->
+            <div class="step-content" data-step="3">
+                <h3 class="text-xl font-bold text-gray-800 mb-6">Do you engage in regular physical activity?</h3>
+                <div class="space-y-3 mb-6">
+                    <button type="button" onclick="selectOption('activity', 0, 'Yes', event)" class="option-btn w-full text-left p-4 border rounded-lg hover:bg-slate-50 transition font-medium border-gray-200 text-gray-700">Yes (At least 150 mins/week - 0 points)</button>
+                    <button type="button" onclick="selectOption('activity', 1, 'No', event)" class="option-btn w-full text-left p-4 border rounded-lg hover:bg-slate-50 transition font-medium border-gray-200 text-gray-700">No (1 point)</button>
+                </div>
+                <div class="border-t pt-4">
+                    <button type="button" onclick="navigateBack()" class="text-gray-600 font-bold hover:underline">← Back</button>
+                </div>
+            </div>
+
+            <!-- STEP 4: PHYSICAL METRICS (BMI HEIGHT WEIGHT) -->
+            <div class="step-content" data-step="4">
+                <h3 class="text-xl font-bold text-gray-800 mb-6">Please enter your parameters for BMI analysis:</h3>
+                <div class="grid grid-cols-2 gap-4 mb-6">
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-600 mb-1">Weight (kg)</label>
+                        <input type="number" id="weightInput" value="75" min="20" max="300" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-600 mb-1">Height (cm)</label>
+                        <input type="number" id="heightInput" value="170" min="50" max="250" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 outline-none">
+                    </div>
+                </div>
+                <button type="button" onclick="processBMIStep()" class="w-full bg-slate-800 text-white font-bold py-3 rounded-lg hover:bg-slate-900 transition mb-4">Save & Continue</button>
+                <div class="border-t pt-4">
+                    <button type="button" onclick="navigateBack()" class="text-gray-600 font-bold hover:underline">← Back</button>
+                </div>
+            </div>
+
+            <!-- STEP 5: WAIST CONFIGURATION SCREEN -->
+            <div class="step-content" data-step="5">
+                <h3 class="text-xl font-bold text-gray-800 mb-2">How would you describe your waist circumference?</h3>
+                <p class="text-sm text-gray-500 mb-6">Measured around the natural waist, above the hip bones.</p>
+                <div class="space-y-3 mb-8">
+                    <button type="button" onclick="selectOption('waist', 0, 'Normal', event)" class="option-btn w-full text-left p-4 border rounded-lg hover:bg-slate-50 transition font-medium border-gray-200 text-gray-700">Normal for my height and sex (0 points)</button>
+                    <button type="button" onclick="selectOption('waist', 1, 'Somewhat elevated', event)" class="option-btn w-full text-left p-4 border rounded-lg hover:bg-slate-50 transition font-medium border-gray-200 text-gray-700">Somewhat elevated (1 point)</button>
+                    <button type="button" onclick="selectOption('waist', 2, 'High', event)" class="option-btn w-full text-left p-4 border rounded-lg hover:bg-slate-50 transition font-medium border-gray-200 text-gray-700">High (e.g., over 40in men / 35in women - 2 points)</button>
+                </div>
+                
+                <!-- Bottom Interface Actions Row -->
+                <div class="flex justify-between items-center border-t pt-4">
+                    <button type="button" onclick="navigateBack()" class="text-gray-600 font-bold hover:underline">← Back</button>
+                    <button type="button" onclick="processFinalSubmission()" class="bg-indigo-900 text-white font-semibold py-3 px-6 rounded-md hover:bg-indigo-950 transition">See my results</button>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- ANALYSIS RESULTS SHEET LAYER (HIDDEN INITIALLY) -->
+        <div id="resultsContainer" class="hidden bg-white p-8 rounded-xl shadow-lg border border-gray-100 text-center space-y-6">
+            <span class="text-xs uppercase tracking-wider text-gray-400 font-bold block">Your Estimated Risk Score</span>
+            
+            <div class="inline-block bg-slate-50 border p-6 rounded-xl min-w-[200px]">
+                <div id="scoreDisplay" class="text-6xl font-extrabold text-indigo-900 mb-1">0</div>
+                <div class="text-xs text-gray-400 font-medium uppercase">out of 11 points</div>
+            </div>
+            
+            <div class="text-sm font-medium text-gray-600">
+                Your BMI: <span id="bmiDisplay" class="font-bold text-gray-900">0</span> 
+                (<span id="bmiTierDisplay" class="text-indigo-700 font-semibold">Normal</span>)
+            </div>
+
+            <div id="badgeDisplay" class="inline-block px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider bg-amber-100 text-amber-800">
+                Elevated Risk
+            </div>
+
+            <div class="text-left border-t pt-6 max-w-xl mx-auto space-y-4">
+                <h4 id="resultTitle" class="font-bold text-lg text-red-800">Your results suggest an elevated risk</h4>
+                <p id="resultDescription" class="text-sm text-gray-600 leading-relaxed">A score above 5 means several common risk factors for pre-diabetes are present. This is not a medical diagnosis, but a valid reason to consult clinical teams regarding testing protocols (A1C or fasting blood glucose markers).</p>
+            </div>
+
+            <div id="save-status" class="mt-3 text-xs text-gray-500 font-medium"></div>
+
+            <div class="pt-4">
+                <button type="button" onclick="retakeQuiz()" class="border border-slate-700 text-slate-800 font-semibold py-2.5 px-6 rounded-lg hover:bg-slate-50 transition">
+                    Retake the assessment
+                </button>
+            </div>
+        </div>
+
+        <!-- Academic Disclaimer Footnotes -->
+        <p class="text-center text-[10px] text-gray-400 mt-8 mb-12">© 2026 Dubai Medical University. For educational screening purposes only. Not a substitute for professional medical advice.</p>
+    </div>
+
+    <!-- Active Program Operations Script -->
+    <script>
+        let currentStep = 1;
+        const totalSteps = 5;
+        
+        // Memory variables map state storage for study analysis
+        let researchDatabase = {
+            agePoints: 0, ageText: "",
+            familyPoints: 0, familyText: "",
+            activityPoints: 0, activityText: "",
+            waistPoints: 0, waistText: "",
+            calculatedBMI: 0, bmiPoints: 0, bmiTier: ""
+        };
+
+        function updateWizardUI() {
+            document.querySelectorAll('.step-content').forEach(el => el.classList.remove('active'));
+            const activeStepEl = document.querySelector(`.step-content[data-step="${currentStep}"]`);
+            if (activeStepEl) activeStepEl.classList.add('active');
+
+            const stepIndicator = document.getElementById('stepIndicator');
+            const percentIndicator = document.getElementById('percentIndicator');
+            const progressBar = document.getElementById('progressBar');
+
+            if (stepIndicator) stepIndicator.textContent = `Question ${currentStep} of ${totalSteps}`;
+            const pct = Math.round((currentStep / totalSteps) * 100);
+            if (percentIndicator) percentIndicator.textContent = `${pct}%`;
+            if (progressBar) progressBar.style.width = `${pct}%`;
+        }
+
+        function selectOption(category, points, label, ev) {
+            researchDatabase[category + 'Points'] = points;
+            researchDatabase[category + 'Text'] = label;
+
+            const stepEl = document.querySelector(`.step-content[data-step="${currentStep}"]`);
+            if (stepEl) {
+                stepEl.querySelectorAll('.option-btn').forEach(btn => {
+                    btn.classList.remove('border-indigo-600', 'bg-indigo-50', 'text-indigo-900', 'ring-2', 'ring-indigo-500');
+                });
+                if (ev && ev.currentTarget) {
+                    ev.currentTarget.classList.add('border-indigo-600', 'bg-indigo-50', 'text-indigo-900', 'ring-2', 'ring-indigo-500');
+                }
+            }
+
+            // Automatically advance for multiple-choice steps 1 to 3
+            if (currentStep < 4) {
+                setTimeout(() => {
+                    currentStep++;
+                    updateWizardUI();
+                }, 180);
+            }
+        }
+
+        function processBMIStep() {
+            const weight = parseFloat(document.getElementById('weightInput').value);
+            const height = parseFloat(document.getElementById('heightInput').value);
+
+            if (!weight || !height || weight <= 0 || height <= 0) {
+                alert('Please enter valid positive values for weight (kg) and height (cm).');
+                return;
+            }
+
+            let h = height;
+            if (h > 0 && h < 3) h = h * 100; // Auto-correct if entered in meters (e.g. 1.7 instead of 170 cm)
+            const heightM = h / 100;
+            const bmi = weight / (heightM * heightM);
+            researchDatabase.calculatedBMI = parseFloat(bmi.toFixed(1));
+
+            let points = 0;
+            let tier = 'Normal';
+
+            if (bmi < 18.5) {
+                tier = 'Underweight';
+                points = 0;
+            } else if (bmi < 25) {
+                tier = 'Normal';
+                points = 0;
+            } else if (bmi < 30) {
+                tier = 'Overweight';
+                points = 1;
+            } else if (bmi < 35) {
+                tier = 'Obese (Class 1)';
+                points = 2;
+            } else if (bmi < 40) {
+                tier = 'Obese (Class 2)';
+                points = 3;
+            } else {
+                tier = 'Severely Obese (Class 3)';
+                points = 4;
+            }
+
+            researchDatabase.bmiPoints = points;
+            researchDatabase.bmiTier = tier;
+
+            currentStep = 5;
+            updateWizardUI();
+        }
+
+        function navigateBack() {
+            if (currentStep > 1) {
+                currentStep--;
+                updateWizardUI();
+            }
+        }
+
+        function processFinalSubmission() {
+            const totalScore = (researchDatabase.agePoints || 0) +
+                               (researchDatabase.familyPoints || 0) +
+                               (researchDatabase.activityPoints || 0) +
+                               (researchDatabase.bmiPoints || 0) +
+                               (researchDatabase.waistPoints || 0);
+
+            document.getElementById('quizContainer').classList.add('hidden');
+            const resultsContainer = document.getElementById('resultsContainer');
+            resultsContainer.classList.remove('hidden');
+
+            document.getElementById('scoreDisplay').textContent = totalScore;
+            document.getElementById('bmiDisplay').textContent = researchDatabase.calculatedBMI || '--';
+            document.getElementById('bmiTierDisplay').textContent = researchDatabase.bmiTier || 'Normal';
+
+            const badge = document.getElementById('badgeDisplay');
+            const title = document.getElementById('resultTitle');
+            const desc = document.getElementById('resultDescription');
+
+            if (totalScore >= 5) {
+                badge.className = 'inline-block px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider bg-red-100 text-red-800';
+                badge.textContent = 'Elevated Risk';
+                title.className = 'font-bold text-lg text-red-800';
+                title.textContent = 'Your results suggest an elevated risk';
+                desc.textContent = 'A score above 5 means several common risk factors for pre-diabetes are present. This is not a medical diagnosis, but a valid reason to consult clinical teams regarding testing protocols (A1C or fasting blood glucose markers).';
+            } else {
+                badge.className = 'inline-block px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider bg-emerald-100 text-emerald-800';
+                badge.textContent = 'Lower Risk';
+                title.className = 'font-bold text-lg text-emerald-800';
+                title.textContent = 'Your results look reassuring';
+                desc.textContent = 'Your results suggest fewer common risk factors for pre-diabetes at this time. Continuing healthy lifestyle practices including routine physical activity and balanced nutrition will help keep your risk low.';
+            }
+
+            // Extract the full message block (Title and Description)
+            const titleEl = document.getElementById('resultTitle');
+            const descEl = document.getElementById('resultDescription');
+            const fullMessage = [
+                titleEl ? titleEl.textContent.trim() : '',
+                descEl ? descEl.textContent.trim() : ''
+            ].filter(Boolean).join('\n\n');
+
+            // Save data to Google Sheets
+            logResultToSheet(totalScore, totalScore >= 5 ? 'Elevated Risk' : 'Lower Risk', fullMessage);
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        const GOOGLE_APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzsDd2348hTfZoB1No65877noVYEerjE723x2LQjVlwh4LjrQEArsP77vr4wsRL3qvErw/exec';
+
+        function logResultToSheet(score, riskCategory, advice) {
+            const statusEl = document.getElementById('save-status');
+            if (statusEl) statusEl.textContent = 'Saving research data...';
+
+            const payload = {
+                timestamp: new Date().toISOString(),
+                score: score,
+                riskCategory: riskCategory,
+                advice: advice || '',
+                age: researchDatabase.ageText || '',
+                age_points: researchDatabase.agePoints,
+                bmi: researchDatabase.calculatedBMI || '',
+                bmi_category: researchDatabase.bmiTier || '',
+                bmi_points: researchDatabase.bmiPoints,
+                family: researchDatabase.familyText || '',
+                family_points: researchDatabase.familyPoints,
+                activity: researchDatabase.activityText || '',
+                activity_points: researchDatabase.activityPoints,
+                waist: researchDatabase.waistText || '',
+                waist_points: researchDatabase.waistPoints
+            };
+
+            fetch(GOOGLE_APPS_SCRIPT_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                body: JSON.stringify(payload)
+            })
+            .then(res => {
+                if (!res.ok) throw new Error('Status ' + res.status);
+                if (statusEl) statusEl.textContent = '✓ Response saved for research purposes. Thank you.';
+            })
+            .catch(err => {
+                console.error('Failed to log to sheet:', err);
+                if (statusEl) statusEl.textContent = '';
+            });
+        }
+
+        function retakeQuiz() {
+            currentStep = 1;
+            researchDatabase = {
+                agePoints: 0, ageText: "",
+                familyPoints: 0, familyText: "",
+                activityPoints: 0, activityText: "",
+                waistPoints: 0, waistText: "",
+                calculatedBMI: 0, bmiPoints: 0, bmiTier: ""
+            };
+
+            document.querySelectorAll('.option-btn').forEach(btn => {
+                btn.classList.remove('border-indigo-600', 'bg-indigo-50', 'text-indigo-900', 'ring-2', 'ring-indigo-500');
+            });
+
+            document.getElementById('resultsContainer').classList.add('hidden');
+            document.getElementById('quizContainer').classList.remove('hidden');
+            updateWizardUI();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,35 @@
+name: Save Risk Calculator Scores
+
+on:
+  repository_dispatch:
+    types: [log_risk_score]
+
+jobs:
+  append_data:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository code
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.RESEARCH_DATA_PAT }}
+
+      - name: Append data to CSV
+        run: |
+          if [ ! -f research_data.csv ]; then
+            echo "Timestamp,Age,BloodPressure,RiskScore" > research_data.csv
+          fi
+          
+          TIMESTAMP="${{ github.event.client_payload.timestamp }}"
+          AGE="${{ github.event.client_payload.age }}"
+          BP="${{ github.event.client_payload.blood_pressure }}"
+          SCORE="${{ github.event.client_payload.score }}"
+          
+          echo "$TIMESTAMP,$AGE,$BP,$SCORE" >> research_data.csv
+
+      - name: Commit and Push update to GitHub
+        run: |
+          git config --global user.name "Data Log Bot"
+          git config --global user.email "actions@github.com"
+          git add research_data.csv
+          git commit -m "Automated log: Added participant research entry"
+          git push
