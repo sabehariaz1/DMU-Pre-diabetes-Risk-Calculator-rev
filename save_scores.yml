@@ -16,15 +16,21 @@ jobs:
       - name: Append data to CSV
         run: |
           if [ ! -f research_data.csv ]; then
-            echo "Timestamp,Age,BloodPressure,RiskScore" > research_data.csv
+            echo "Timestamp,Score,RiskCategory,Age,BMI,BMICategory,FamilyHistory,Activity,WaistSize,DietControl" > research_data.csv
           fi
           
           TIMESTAMP="${{ github.event.client_payload.timestamp }}"
-          AGE="${{ github.event.client_payload.age }}"
-          BP="${{ github.event.client_payload.blood_pressure }}"
           SCORE="${{ github.event.client_payload.score }}"
+          CATEGORY="${{ github.event.client_payload.riskCategory }}"
+          AGE="${{ github.event.client_payload.age }}"
+          BMI="${{ github.event.client_payload.bmi }}"
+          BMI_CAT="${{ github.event.client_payload.bmi_category }}"
+          FAMILY="${{ github.event.client_payload.family }}"
+          ACTIVITY="${{ github.event.client_payload.activity }}"
+          WAIST="${{ github.event.client_payload.waist }}"
+          DIET="${{ github.event.client_payload.diet }}"
           
-          echo "$TIMESTAMP,$AGE,$BP,$SCORE" >> research_data.csv
+          echo "\"$TIMESTAMP\",\"$SCORE\",\"$CATEGORY\",\"$AGE\",\"$BMI\",\"$BMI_CAT\",\"$FAMILY\",\"$ACTIVITY\",\"$WAIST\",\"$DIET\"" >> research_data.csv
 
       - name: Commit and Push update to GitHub
         run: |
